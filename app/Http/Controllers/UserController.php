@@ -37,7 +37,16 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      $user = new User;
+      $user->name = $request->input('name');
+      $user->email = $request->input('email');
+      $user->password = bcrypt($request->input('password'));
+      $user->save();
+      $newUser = User::where('email',$request->input('email'))->first();
+
+
+
+      return redirect()->action('UserController@show', ['id' => $newUser]);
     }
 
     /**
