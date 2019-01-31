@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use auth;
 
 class HomeController extends Controller
 {
@@ -21,8 +22,11 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('home');
+        $request->session()->put('infoUser', Auth::User());
+        $userCookie = cookie('user', Auth::user()->name, 60);
+        $request->user()->authorizeRoles(['user', 'admin']);
+        return response()->view('home')->cookie($userCookie);
     }
 }
