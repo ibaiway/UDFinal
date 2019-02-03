@@ -39,9 +39,10 @@ class UserController extends Controller
     {
       $validatedData = $request->validate([
         'email' => 'required|email|max:40',
-        'name' => 'required',
-        'password' => 'required',
-      ])
+        'name' => 'required|alpha',
+        'password' => 'required|min:8',
+        'rpassword' => 'required|same:password',
+      ]);
       $user = new User;
       $user->name = $request->input('name');
       $user->email = $request->input('email');
@@ -75,7 +76,8 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id);
+        return view('userupdate',['user'=>$user]);
     }
 
     /**
@@ -87,7 +89,12 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+      $user=User::find($id);
+
+      $user->name = $request->input('name');
+
+      $user->save();
+      return view('user',['user'=>$user]);
     }
 
     /**
@@ -98,6 +105,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+        return redirect()->action('UserController@index');
     }
 }
